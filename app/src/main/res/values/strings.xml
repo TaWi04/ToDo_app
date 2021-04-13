@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">ToDo_new Try</string>
+    <string name="submit">Submit</string>
+    <string name="important">Important</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_addNote">addNote</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Cloud-saving</string>
+    <string name="saving_automatically_title">Saving Lists in Cloud</string>
+    <string name="saving_automatically_on"> Save lists in cloud automatically
+    </string>
+    <string name="saving_automatically_off">Save lists in cloud only when saved manually</string>
+    <string name="notes_header">Note</string>
+    <string name="general_header">General</string>
+    <string name="appearance">Appearance</string>
+    <string name="nav_header_welcome_msg">Have a nice day</string>
+</resources>

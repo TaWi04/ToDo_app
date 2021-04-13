@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="htlgrieskirchen.net.tawimmer.todo_newtry.ui.home.HomeFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_nav_home_to_showTodoListFragment"
+            app:destination="@id/nav_showTodoList" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_addList"
+            app:destination="@id/nav_addList" />
+        <action
+            android:id="@+id/action_nav_home_to_editListFragment"
+            app:destination="@id/editListFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_addNote"
+        android:name="htlgrieskirchen.net.tawimmer.todo_newtry.ui.addnote.AddNoteFragment"
+        android:label="@string/menu_addNote"
+        tools:layout="@layout/fragment_addnotes">
+        <action
+            android:id="@+id/action_nav_addNote_to_nav_slideshow"
+            app:destination="@id/nav_slideshow" />
+        <action
+            android:id="@+id/action_nav_addNote_to_showTodoListFragment"
+            app:destination="@id/nav_showTodoList" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_slideshow"
+        android:name="htlgrieskirchen.net.tawimmer.todo_newtry.ui.slideshow.SlideshowFragment"
+        android:label="@string/menu_slideshow"
+        tools:layout="@layout/fragment_slideshow" />
+    <fragment
+        android:id="@+id/nav_showTodoList"
+        android:name="htlgrieskirchen.net.tawimmer.todo_newtry.ui.showtodolist.ShowTodoListFragment"
+        android:label="fragment_showtodolist"
+        tools:layout="@layout/fragment_showtodolist" >
+        <action
+            android:id="@+id/action_showTodoListFragment_to_nav_addNote"
+            app:destination="@id/nav_addNote" />
+        <action
+            android:id="@+id/action_showTodoListFragment_to_nav_home"
+            app:destination="@id/nav_home" />
+        <action
+            android:id="@+id/action_nav_showTodoList_to_editNoteFragment"
+            app:destination="@id/editNoteFragment" />
+        <action
+            android:id="@+id/action_nav_showTodoList_to_nav_addNote"
+            app:destination="@id/nav_addNote" />
+    </fragment>
+    <fragment
+        android:id="@+id/editNoteFragment"
+        android:name="htlgrieskirchen.net.tawimmer.todo_newtry.ui.editnote.EditNoteFragment"
+        android:label="fragment_editnote"
+        tools:layout="@layout/fragment_editnote" >
+        <action
+            android:id="@+id/action_editNoteFragment_to_nav_showTodoList"
+            app:destination="@id/nav_showTodoList" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_addList"
+        android:name="htlgrieskirchen.net.tawimmer.todo_newtry.ui.addlist.AddListFragment"
+        android:label="fragment_addlist"
+        tools:layout="@layout/fragment_addlist" >
+        <action
+            android:id="@+id/action_nav_addList_to_nav_home"
+            app:destination="@id/nav_home" />
+    </fragment>
+    <fragment
+        android:id="@+id/editListFragment"
+        android:name="htlgrieskirchen.net.tawimmer.todo_newtry.ui.editlist.EditListFragment"
+        android:label="fragment_editlist"
+        tools:layout="@layout/fragment_editlist" >
+        <action
+            android:id="@+id/action_editListFragment_to_nav_home"
+            app:destination="@id/nav_home" />
+    </fragment>
+</navigation>

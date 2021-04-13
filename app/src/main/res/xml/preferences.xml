@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/appearance">
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="hideDone"
+        android:title="Hide Done Tasks" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="darkActivate"
+            android:title="Dark Mode" />
+    </PreferenceCategory>
+    <PreferenceCategory app:title="@string/general_header">
+        <EditTextPreference
+            app:key="signature"
+            app:title="@string/signature_title"
+            app:useSimpleSummaryProvider="true"/>
+
+    </PreferenceCategory>
+    <PreferenceCategory app:title="@string/sync_header">
+
+        <SwitchPreferenceCompat
+            app:key="sync"
+            app:title="@string/sync_title"
+            android:defaultValue="false"/>
+
+        <SwitchPreferenceCompat
+            app:dependency="sync"
+            app:key="savingAutomatically"
+            app:summaryOff="@string/saving_automatically_off"
+            app:summaryOn="@string/saving_automatically_on"
+            app:title="@string/saving_automatically_title"
+            android:defaultValue="false"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
