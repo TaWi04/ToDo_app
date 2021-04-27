@@ -14,6 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
+import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.getHideDone;
+
 public class RecyclerViewAdapter extends RecyclerView.Adapter {
 
     private static final int DROPDOWN = 1;
@@ -25,15 +27,21 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
     public RecyclerViewAdapter(Activity activity, TodoList dataSet) {
         this.dataSet = dataSet;
         this.activity = activity;
+        DrawerMenuActivity.setHideDone(getHideDone());
     }
 
     private boolean checkedShown = false;
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
+        DrawerMenuActivity.setHideDone(getHideDone());
         if (viewType == DROPDOWN) {
-            return new ViewHolderDropdown(LayoutInflater.from(parent.getContext())
+            DrawerMenuActivity.setHideDone(getHideDone());
+            RecyclerView.ViewHolder viewHolder =  new ViewHolderDropdown(LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.view_dropdown, parent, false));
+            DrawerMenuActivity.setHideDone(getHideDone());
+            return viewHolder;
         } else {
             return new ViewHolderNote(LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.view_note, parent, false), parent);
@@ -105,7 +113,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
             bindCheck(note);
             setChangeNoteOnClick(note);
             setImage(note);
-
 
             title.setText(note.getTitle());
 
@@ -209,13 +216,18 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
         public ViewHolderDropdown(View view) {
             super(view);
             this.view = view;
-
+            DrawerMenuActivity.setHideDone(getHideDone());
             dropdown = view.findViewById(R.id.dropdown);
             dropdownLayout = dropdown;
         }
 
+        public LinearLayout getDropdown(){
+            return dropdown;
+        }
+
         public void bind() {
             dropdownLayout.setOnClickListener(v -> {
+                DrawerMenuActivity.setHideDone(getHideDone());
                 if (checkedShown || DrawerMenuActivity.getHideDone()) {
                     checkedShown = false;
                     notifyItemRangeRemoved(getAdapterPosition() + 1, dataSet.getCheckedNotes().size());

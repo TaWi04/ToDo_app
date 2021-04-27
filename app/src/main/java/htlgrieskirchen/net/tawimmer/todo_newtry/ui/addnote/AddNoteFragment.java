@@ -27,6 +27,7 @@ import htlgrieskirchen.net.tawimmer.todo_newtry.TodoList;
 
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.allTodoLists;
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.currentListIndex;
+import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.drawerMenuActivity;
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.hideKeyboard;
 
 public class AddNoteFragment extends Fragment {
@@ -49,6 +50,7 @@ public class AddNoteFragment extends Fragment {
                 createDatePicker();
             }
         });
+        drawerMenuActivity.getSupportActionBar().setTitle("New Note");
 
         FloatingActionButton floatingActionButton = (FloatingActionButton) root.findViewById(R.id.fab_check);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {

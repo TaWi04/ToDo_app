@@ -10,6 +10,8 @@ import androidx.preference.PreferenceFragmentCompat;
 import htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity;
 import htlgrieskirchen.net.tawimmer.todo_newtry.R;
 
+import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.drawerMenuActivity;
+
 public class SettingsFragment extends PreferenceFragmentCompat {
     private SharedPreferences sharedPreferences;
 
@@ -20,6 +22,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         sharedPreferences = DrawerMenuActivity.prefs;
         setOnPreferenceChangeListenerOnPreferences();
+        drawerMenuActivity.getSupportActionBar().setTitle("Settings");
+
     }
 
     private void setOnPreferenceChangeListenerOnPreferences() {

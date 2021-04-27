@@ -26,6 +26,7 @@ import htlgrieskirchen.net.tawimmer.todo_newtry.TodoList;
 import htlgrieskirchen.net.tawimmer.todo_newtry.ui.addlist.AddListViewModel;
 
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.allTodoLists;
+import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.drawerMenuActivity;
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.hideKeyboard;
 
 public class EditListFragment extends Fragment {
@@ -45,6 +46,7 @@ public class EditListFragment extends Fragment {
         editListViewModel =
                 new ViewModelProvider(this).get(AddListViewModel.class);
         root = inflater.inflate(R.layout.fragment_editlist, container, false);
+        drawerMenuActivity.getSupportActionBar().setTitle(todoList.getTitle());
 
         FloatingActionButton floatingActionButton = (FloatingActionButton) root.findViewById(R.id.fab_check);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {

@@ -34,6 +34,7 @@ import htlgrieskirchen.net.tawimmer.todo_newtry.ui.addnote.AddNoteViewModel;
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.allTodoLists;
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.currentListIndex;
 
+import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.drawerMenuActivity;
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.hideKeyboard;
 
 
@@ -55,6 +56,7 @@ public class EditNoteFragment extends Fragment {
         editNoteViewModel =
                 new ViewModelProvider(this).get(AddNoteViewModel.class);
         root = inflater.inflate(R.layout.fragment_editnote, container, false);
+        drawerMenuActivity.getSupportActionBar().setTitle(currentNote.getTitle());
 
         txtTitle = (EditText) root.findViewById(R.id.editTextTitle);
         txtTitle.setText(currentNote.getTitle());

@@ -25,6 +25,7 @@ import htlgrieskirchen.net.tawimmer.todo_newtry.R;
 import htlgrieskirchen.net.tawimmer.todo_newtry.TodoList;
 
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.allTodoLists;
+import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.drawerMenuActivity;
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.hideKeyboard;
 
 public class AddListFragment extends Fragment {
@@ -41,6 +42,7 @@ public class AddListFragment extends Fragment {
         addListViewModel =
                 new ViewModelProvider(this).get(AddListViewModel.class);
         root = inflater.inflate(R.layout.fragment_addlist, container, false);
+        drawerMenuActivity.getSupportActionBar().setTitle("New List");
 
         FloatingActionButton floatingActionButton = (FloatingActionButton) root.findViewById(R.id.fab_check);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {

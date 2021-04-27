@@ -1,11 +1,13 @@
 package htlgrieskirchen.net.tawimmer.todo_newtry;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
@@ -16,6 +18,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
@@ -86,7 +89,9 @@ public class DrawerMenuActivity extends AppCompatActivity {
         drawerMenuActivity = this;
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        //toolbar.setTitle("");
         currentListIndex = -1;
+        setHideDone(getHideDone());
 
         allTodoLists = new ArrayList<>();
         listOfLabels = new ArrayList<>();
@@ -106,6 +111,9 @@ public class DrawerMenuActivity extends AppCompatActivity {
                 R.id.nav_home, R.id.nav_showTodoList, R.id.nav_settings)
                 .setDrawerLayout(drawer)
                 .build();
+        //getActionBar().setTitle("Hello world App");
+        //getSupportActionBar().setTitle("Hello world App");
+
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
@@ -172,13 +180,27 @@ public class DrawerMenuActivity extends AppCompatActivity {
         }
     }
 
+
+   // @RequiresApi(Build.VERSION_CODES.Q)
+    @TargetApi(Build.VERSION_CODES.Q)
+    private String getPath() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            return Environment.getExternalStorageDirectory().getAbsolutePath();
+        } else {
+            return getExternalFilesDir(null).getAbsolutePath();
+        }
+    }
+
     public void saveLists(){
         File file;
         try {
+
             PrintWriter outPrintWriter;
+            String state = Environment.getExternalStorageState();
+            if (! state . equals(Environment.MEDIA_MOUNTED)) return;
             if(permissionReading && permissionWriting){
-                String folder =  Environment.getExternalStorageDirectory().getAbsolutePath();
-                file = new File(folder + File.separator + "lists.json");
+                String folder = getPath();
+                        file = new File(folder + File.separator + "lists.json");
                 outPrintWriter= new PrintWriter(new OutputStreamWriter(new FileOutputStream(file)));
             }else{
                 file = new File("lists.json");
@@ -225,9 +247,11 @@ public class DrawerMenuActivity extends AppCompatActivity {
     private void loadLists(){
         File file;
         try {
+            String state = Environment.getExternalStorageState();
+            if (! state . equals(Environment.MEDIA_MOUNTED)) return;
             FileInputStream fileInputStream;
             if(permissionReading && permissionWriting){
-                String folder =  Environment.getExternalStorageDirectory().getAbsolutePath();
+                String folder =  getPath();
                 file = new File(folder + File.separator + "lists.json");
                 fileInputStream = new FileInputStream(file);
             }else{
@@ -350,7 +374,6 @@ public class DrawerMenuActivity extends AppCompatActivity {
     public static void setHideDone(boolean hideDone) {
         DrawerMenuActivity.hideDone = hideDone;
         if(hideDone && RecyclerViewAdapter.dropdownLayout != null){
-
             RecyclerViewAdapter.dropdownLayout.setVisibility(View.GONE);
         }else if(!hideDone && RecyclerViewAdapter.dropdownLayout != null){
             RecyclerViewAdapter.dropdownLayout.setVisibility(View.VISIBLE);

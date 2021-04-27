@@ -22,6 +22,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
+import htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity;
 import htlgrieskirchen.net.tawimmer.todo_newtry.Label;
 import htlgrieskirchen.net.tawimmer.todo_newtry.Note;
 import htlgrieskirchen.net.tawimmer.todo_newtry.R;
@@ -31,6 +32,7 @@ import htlgrieskirchen.net.tawimmer.todo_newtry.TodoList;
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.allTodoLists;
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.currentListIndex;
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.drawerMenuActivity;
+import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.getHideDone;
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.root;
 
 public class ShowTodoListFragment extends Fragment {
@@ -61,12 +63,14 @@ public class ShowTodoListFragment extends Fragment {
         }
         root = inflater.inflate(R.layout.fragment_showtodolist, container, false);
 
+        drawerMenuActivity.getSupportActionBar().setTitle(todoList.getTitle());
         TextView textView = root.findViewById(R.id.textView_showToDoList_title);
         textView.setText(todoList.getTitle());
         recyclerView = (RecyclerView)root.findViewById(R.id.recyclerView);
         adapter = new RecyclerViewAdapter(getActivity(),todoList);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(root.getContext()));
+        DrawerMenuActivity.setHideDone(getHideDone());
         activity = getActivity();
 
 
