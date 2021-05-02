@@ -3,16 +3,11 @@ package htlgrieskirchen.net.tawimmer.todo_newtry;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import java.util.Calendar;
-
-import htlgrieskirchen.net.tawimmer.todo_newtry.ui.addnote.AddNoteFragment;
 
 public class CalendarForToDo {
 

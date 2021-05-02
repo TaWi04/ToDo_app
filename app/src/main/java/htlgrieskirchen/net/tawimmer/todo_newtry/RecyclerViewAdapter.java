@@ -14,28 +14,37 @@ import androidx.annotation.NonNull;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
+import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.getHideDone;
+
 public class RecyclerViewAdapter extends RecyclerView.Adapter {
 
     private static final int DROPDOWN = 1;
 
     private Activity activity;
     private TodoList dataSet;
+    public static LinearLayout dropdownLayout;
 
-    public RecyclerViewAdapter(Activity activity,TodoList dataSet) {
+    public RecyclerViewAdapter(Activity activity, TodoList dataSet) {
         this.dataSet = dataSet;
         this.activity = activity;
+        DrawerMenuActivity.setHideDone(getHideDone());
     }
 
     private boolean checkedShown = false;
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
+        DrawerMenuActivity.setHideDone(getHideDone());
         if (viewType == DROPDOWN) {
-            return new ViewHolderDropdown(LayoutInflater.from(parent.getContext())
+            DrawerMenuActivity.setHideDone(getHideDone());
+            RecyclerView.ViewHolder viewHolder =  new ViewHolderDropdown(LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.view_dropdown, parent, false));
+            DrawerMenuActivity.setHideDone(getHideDone());
+            return viewHolder;
         } else {
             return new ViewHolderNote(LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.view_note, parent, false),parent);
+                    .inflate(R.layout.view_note, parent, false), parent);
         }
     }
 
@@ -58,7 +67,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        int count = dataSet.getNotes().size()+ 1;
+        int count = dataSet.getNotes().size() + 1;
         if (checkedShown) {
             count += dataSet.getCheckedNotes().size();
         }
@@ -74,13 +83,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
             return dataSet.getNotes().get(adapterPosition);
         }
     }
-    private int getCheckedIndex(int adapterPostition){
-        return adapterPostition - dataSet.getCheckedNotes().size()- 1;
+
+    private int getCheckedIndex(int adapterPostition) {
+        return adapterPostition - dataSet.getCheckedNotes().size() - 1;
     }
 
-    public class ViewHolderNote extends RecyclerView.ViewHolder {
 
-        //private Note note;
+    public class ViewHolderNote extends RecyclerView.ViewHolder {
 
         private ImageButton check;
         private TextView title;
@@ -101,16 +110,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
 
         @SuppressLint("ResourceAsColor")
         public void bind(Note note) {
-            //this.note = note;
-            if(note.getTitle().equals("temp3")&& note.isChecked())
-            {
-                title.setTextColor(R.color.black);
-            }
             bindCheck(note);
             setChangeNoteOnClick(note);
             setImage(note);
-
-            //TODO setup views I THINK IT'S DONE
 
             title.setText(note.getTitle());
 
@@ -128,22 +130,19 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
                 details.setVisibility(View.GONE);
             }
             //ToDo maybe show time due (bis beendet sein muss)
-            //LocalDate tempDate = note.getDate();
-            String dateString =  note.getFormatedDateString("dd.MM.yyyy","hh:mm");
+            String dateString = note.getFormatedDateString("dd.MM.yyyy", "HH:mm");
 
 
-            if(dateString!=null && !note.isChecked()){
-                date.setText(""+dateString);
+            if (dateString != null && !note.isChecked()) {
+                date.setText("" + dateString);
                 //date.setHint(null);
                 date.setVisibility(View.VISIBLE);
-                if(note.isOver()){
+                if (note.isOver()) {
                     date.setTextColor(activity.getColor(R.color.dateIsOver));
-                }else{
-                   date.setTextColor(activity.getColor(R.color.black));
+                } else {
+                    date.setTextColor(activity.getColor(R.color.black));
                 }
-            }else{
-                //date.setText(""+dateString);
-                //date.setHint(null);
+            } else {
                 date.setText("");
                 date.setVisibility(View.GONE);
             }
@@ -154,37 +153,25 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
             check.setOnClickListener(v -> {
                 check.setOnClickListener(null);
                 if (note.isChecked()) {
-                    dataSet.uncheckNote(getAdapterPosition()- (dataSet.getNotes().size() + 1));
+                    dataSet.uncheckNote(getAdapterPosition() - (dataSet.getNotes().size() + 1));
                     setImage(note);
 
 
-
-                    String dateString =  note.getFormatedDateString("dd.MM.yyyy","hh:mm");
-                    if(dateString!=null && !note.isChecked()){
-                        date.setText(""+dateString);
+                    String dateString = note.getFormatedDateString("dd.MM.yyyy", "HH:mm");
+                    if (dateString != null && !note.isChecked()) {
+                        date.setText("" + dateString);
                         date.setVisibility(View.VISIBLE);
-                        if(note.isOver()){
+                        if (note.isOver()) {
                             date.setTextColor(activity.getColor(R.color.dateIsOver));
-                        }else{
+                        } else {
                             date.setTextColor(activity.getColor(R.color.black));
                         }
-                    }else{
+                    } else {
                         date.setText("");
                         date.setVisibility(View.GONE);
                     }
-
-
-                    /*if(!date.getText().equals("") && date != null){//
-                        date.setText(note.getFormatedDateString("dd.MM.yyyy","hh:mm"));
-                        date.setVisibility(View.VISIBLE);//TODO NEW
-                    }*/
-
-
-
-
-
-                    notifyItemMoved(getAdapterPosition(),0);
-                    if(dataSet.getCheckedNotes().isEmpty()){
+                    notifyItemMoved(getAdapterPosition(), 0);
+                    if (dataSet.getCheckedNotes().isEmpty()) {
                         notifyItemRemoved(getItemCount());
                         checkedShown = false;
                     }
@@ -194,11 +181,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
                     setImage(note);
 
                     if (checkedShown) {
-                       // notifyItemMoved(getAdapterPosition(), dataSet.getNotes().size() + 1);
                         notifyItemMoved(getAdapterPosition(), dataSet.getNotes().size() + 1);
                     } else {
                         notifyItemRemoved(getAdapterPosition());
-                        //notifyItemRangeChanged(getAdapterPosition(),getItemCount()-getAdapterPosition());
                     }
 
                 }
@@ -206,31 +191,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
             });
         }
 
-        private void setChangeNoteOnClick(Note note){
+        private void setChangeNoteOnClick(Note note) {
             changeNote.setOnClickListener(v -> {
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("Note",note);
-                Navigation.findNavController(activity, R.id.nav_host_fragment).navigate(R.id.action_nav_showTodoList_to_editNoteFragment,bundle);
-                /*TextView textViewTitle = parent.findViewById(R.id.view_note_title);
-                textViewTitle.setText(title.getText());
-
-                TextView textViewDetails = parent.findViewById(R.id.view_note_detail);
-                if(details != null){
-                    textViewDetails.setText(details.getText());
-                }
-                //getFragmentManager().beginTransaction().replace(R.id.*TO_BE_REPLACED_LAYOUT_ID*, new tasks()).commit();
-                TextView textViewDate = parent.findViewById(R.id.view_note_date);
-                if(date != null){
-                    textViewDate.setText(details.getText());
-                }*/
+                bundle.putSerializable("Note", note);
+                Navigation.findNavController(activity, R.id.nav_host_fragment).navigate(R.id.action_nav_showTodoList_to_editNoteFragment, bundle);
             });
-
-
-
-
-
-
-            //parent.getContext();
         }
 
         private void setImage(Note note) {
@@ -245,15 +211,24 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
     public class ViewHolderDropdown extends RecyclerView.ViewHolder {
 
         private LinearLayout dropdown;
+        private View view;
 
         public ViewHolderDropdown(View view) {
             super(view);
+            this.view = view;
+            DrawerMenuActivity.setHideDone(getHideDone());
             dropdown = view.findViewById(R.id.dropdown);
+            dropdownLayout = dropdown;
+        }
+
+        public LinearLayout getDropdown(){
+            return dropdown;
         }
 
         public void bind() {
-            dropdown.setOnClickListener(v -> {
-                if (checkedShown) {
+            dropdownLayout.setOnClickListener(v -> {
+                DrawerMenuActivity.setHideDone(getHideDone());
+                if (checkedShown || DrawerMenuActivity.getHideDone()) {
                     checkedShown = false;
                     notifyItemRangeRemoved(getAdapterPosition() + 1, dataSet.getCheckedNotes().size());
                 } else {
@@ -262,5 +237,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
                 }
             });
         }
+
     }
 }

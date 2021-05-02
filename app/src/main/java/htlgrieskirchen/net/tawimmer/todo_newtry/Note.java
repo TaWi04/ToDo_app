@@ -2,10 +2,8 @@ package htlgrieskirchen.net.tawimmer.todo_newtry;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 
 public class Note implements Serializable{
@@ -17,7 +15,7 @@ public class Note implements Serializable{
     private boolean important;
     //private List<Note> subTasks;
     private List<Label> labels;
-    private boolean checked; //TODO
+    private boolean checked;
 
 
 

@@ -1,5 +1,6 @@
 package htlgrieskirchen.net.tawimmer.todo_newtry.ui.home;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
@@ -44,7 +46,19 @@ public class HomeFragment extends Fragment {
         homeViewModel =
                 new ViewModelProvider(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
-        //final TextView textView = root.findViewById(R.id.text_home);
+
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            if ((todoList = (TodoList) bundle.getSerializable("home")) != null) {
+
+            } else {
+                todoList = (TodoList) bundle.getSerializable("homeAfterDeletion");
+                TodoList todoList = allTodoLists.remove(allTodoLists.size() - 1);
+                showSnackbar(todoList);
+                updateUI();
+            }
+        }
+
         homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
@@ -52,55 +66,55 @@ public class HomeFragment extends Fragment {
             }
         });
 
-
-        //root = inflater.inflate(R.layout.fragment_showtodolist, container, false);
-        //((DrawerMenuActivity)this.getActivity()).allTodoLists;
-        //todoList = new TodoList("News", setList(), new Label("Test"));//TODO add Lists CURRENTLY ONLY FOR TEST PURPOSE
-        /*TextView textView = root.findViewById(R.id.textView_showToDoList_title);
-        textView.setText(todoList.getTitle());*/
-        recyclerView = (RecyclerView)root.findViewById(R.id.recyclerViewAllLists);
-        ArrayList arr = ((DrawerMenuActivity)this.getActivity()).allTodoLists;
+        recyclerView = (RecyclerView) root.findViewById(R.id.recyclerViewAllLists);
+        ArrayList arr = ((DrawerMenuActivity) this.getActivity()).allTodoLists;
         ArrayList arrayList = arr;
-        adapter = new RecyclerViewListAdapter(getActivity(),(arrayList));
+        adapter = new RecyclerViewListAdapter(getActivity(), (arrayList));
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(root.getContext()));
         activity = getActivity();
-
-
 
         FloatingActionButton floatingActionButton = (FloatingActionButton) root.findViewById(R.id.fab_check);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Navigation.findNavController(activity, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_addList);
             }
         });
-        ;
+
         progressBar = root.findViewById(R.id.progressBar);
         updateUI();
-
 
         return root;
     }
 
 
-
     public void updateUI() {
+        if ((((DrawerMenuActivity) this.getActivity()).allTodoLists) != null) {
 
-
-        if ((((DrawerMenuActivity)this.getActivity()).allTodoLists) != null) {
-
-            adapter = new RecyclerViewListAdapter(activity,((ArrayList)(((DrawerMenuActivity)getActivity()).allTodoLists)));
+            adapter = new RecyclerViewListAdapter(activity, ((ArrayList) (((DrawerMenuActivity) getActivity()).allTodoLists)));
             recyclerView.setAdapter(adapter);
-
-            /*fab_create.show()
-            fab_create.setOnClickListener {
-                Dialog_Create(requireActivity(),list).show()
-            }*/
-
         } else {
             recyclerView.setAdapter(null);
         }
     }
+
+    @SuppressLint("WrongConstant")
+    private void showSnackbar(TodoList todoList) {
+        Snackbar snackbar = Snackbar
+                .make(getActivity().findViewById(android.R.id.content), "Do you want to reverse your changes?", Snackbar.LENGTH_LONG);
+        snackbar.setAction("UNDO", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar snackbar1 = Snackbar.make(getActivity().findViewById(android.R.id.content), "Message is restored!", Snackbar.LENGTH_SHORT);
+                snackbar1.show();
+                snackbar.show();
+                allTodoLists.add(todoList);
+                updateUI();
+            }
+        });
+
+        snackbar.show();
+    }
+
 }

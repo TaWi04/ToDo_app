@@ -1,35 +1,30 @@
 package htlgrieskirchen.net.tawimmer.todo_newtry;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-//import android.support.v7.app.AlertDialog;
 import android.util.AttributeSet;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SpinnerAdapter;
 
-//import com.woolha.example.models.Item;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatSpinner;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 
-public class MultiSelectionSpinner extends AppCompatSpinner implements//android.support.v7.widget.AppCompatSpinner
+public class MultiSelectionSpinner extends AppCompatSpinner implements
         DialogInterface.OnMultiChoiceClickListener {
-    // Activity activity;
-    ArrayList<Label> labels = null;
-    boolean[] selection = null;
+
+    ArrayList<Label> labels ;
+    boolean[] selection ;
     ArrayAdapter adapter;
 
     public MultiSelectionSpinner(Context context) {
         super(context);
-        //this.activity = activity;
 
+        labels = new ArrayList<>();
         adapter = new ArrayAdapter(context,
                 android.R.layout.simple_spinner_item);
         super.setAdapter(adapter);
@@ -38,6 +33,8 @@ public class MultiSelectionSpinner extends AppCompatSpinner implements//android.
     public MultiSelectionSpinner(Context context, AttributeSet attrs) {
         super(context, attrs);
 
+        labels = new ArrayList<>();
+        selection = new boolean[labels.size()];
         adapter = new ArrayAdapter(context,
                 android.R.layout.simple_spinner_item);
         super.setAdapter(adapter);
@@ -47,7 +44,7 @@ public class MultiSelectionSpinner extends AppCompatSpinner implements//android.
     public void onClick(DialogInterface dialog, int which, boolean isChecked) {
         if (selection != null && which < selection.length) {
             selection[which] = isChecked;
-
+            labels.get(which).setChecked(isChecked);
             adapter.clear();
             adapter.add(buildSelectedItemString());
         } else {
@@ -65,7 +62,7 @@ public class MultiSelectionSpinner extends AppCompatSpinner implements//android.
             labelsNames[i] = labels.get(i).getName();
         }
         builder.setTitle("Labels:");
-        builder.setMultiChoiceItems(labelsNames, selection, this);
+        builder.setMultiChoiceItems(labelsNames, this.selection, this);
         builder.setNeutralButton("Add Label", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
@@ -85,9 +82,9 @@ public class MultiSelectionSpinner extends AppCompatSpinner implements//android.
                 alertDialog.setPositiveButton("Add", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
-                        //EditText editText = findViewById(R.id.dialog_label_name_field);
                         Label label = new Label(input.getText().toString());
                         labels.add(label);
+                        DrawerMenuActivity.listOfLabels.add(label);
                         setItems(labels);
                         ArrayList arr = getSelectedItems();
                         arr.add(label);
@@ -119,23 +116,36 @@ public class MultiSelectionSpinner extends AppCompatSpinner implements//android.
     }
 
     public void setItems(ArrayList<Label> labels) {
+
         this.labels = labels;
-        selection = new boolean[this.labels.size()];
+        boolean[] temp =  new boolean[this.labels.size()];
+        for (int i = 0; i < temp.length; i++) {
+            if(i >= selection.length){
+                temp[i]=false;
+            }else{
+
+                temp[i] = selection[i];
+            }
+
+        }
+        this.selection = new boolean[temp.length];
+        selection = temp;
+
         adapter.clear();
-        //adapter.add(new Label(""));
         adapter.addAll(labels);
-        Arrays.fill(selection, false);
     }
 
     public void setSelection(ArrayList<Label> selection) {
         for (int i = 0; i < this.selection.length; i++) {
             this.selection[i] = false;
+            labels.get(i).setChecked(false);
         }
 
         for (Label sel : selection) {
             for (int j = 0; j < labels.size(); ++j) {
                 if (labels.get(j).getValue().equals(sel.getValue())) {
                     this.selection[j] = true;
+                    labels.get(j).setChecked(true);
                 }
             }
         }
@@ -173,5 +183,9 @@ public class MultiSelectionSpinner extends AppCompatSpinner implements//android.
         }
 
         return selectedItems;
+    }
+
+    public ArrayList<Label> getLabels(){
+        return labels;
     }
 }

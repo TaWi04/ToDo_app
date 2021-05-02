@@ -11,14 +11,14 @@
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home" >
         <action
-            android:id="@+id/action_nav_home_to_nav_gallery"
-            app:destination="@id/nav_addNote" />
-        <action
             android:id="@+id/action_nav_home_to_showTodoListFragment"
             app:destination="@id/nav_showTodoList" />
         <action
             android:id="@+id/action_nav_home_to_nav_addList"
             app:destination="@id/nav_addList" />
+        <action
+            android:id="@+id/action_nav_home_to_editListFragment"
+            app:destination="@id/editListFragment" />
     </fragment>
 
     <fragment
@@ -73,6 +73,15 @@
         tools:layout="@layout/fragment_addlist" >
         <action
             android:id="@+id/action_nav_addList_to_nav_home"
+            app:destination="@id/nav_home" />
+    </fragment>
+    <fragment
+        android:id="@+id/editListFragment"
+        android:name="htlgrieskirchen.net.tawimmer.todo_newtry.ui.editlist.EditListFragment"
+        android:label="fragment_editlist"
+        tools:layout="@layout/fragment_editlist" >
+        <action
+            android:id="@+id/action_editListFragment_to_nav_home"
             app:destination="@id/nav_home" />
     </fragment>
 </navigation>

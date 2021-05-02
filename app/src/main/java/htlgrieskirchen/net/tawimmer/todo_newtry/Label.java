@@ -1,9 +1,12 @@
 package htlgrieskirchen.net.tawimmer.todo_newtry;
 
-public class Label {
+import java.io.Serializable;
+
+public class Label  implements Serializable {
 
     private String name;
     private String value;
+    private boolean checked;
 
     public Label(String name) {
         this.name = name;
@@ -13,7 +16,12 @@ public class Label {
     public String getName() {
         return name;
     }
-
+    public boolean isChecked() {
+        return checked;
+    }
+    public void setChecked(boolean pChecked) {
+         checked = pChecked;
+    }
     public String getValue() {
         return value;
     }
