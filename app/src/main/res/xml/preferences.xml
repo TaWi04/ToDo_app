@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory app:title="@string/appearance">
         <CheckBoxPreference
@@ -15,23 +16,31 @@
         <EditTextPreference
             app:key="signature"
             app:title="@string/signature_title"
-            app:useSimpleSummaryProvider="true"/>
+            app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
     <PreferenceCategory app:title="@string/sync_header">
-
+        <EditTextPreference
+            app:key="username"
+            app:title="Username" />
+        <EditTextPreference
+            app:key="password"
+            app:title="Password" />
+        <EditTextPreference
+            app:key="name"
+            app:title="Name" />
         <SwitchPreferenceCompat
+            android:defaultValue="false"
             app:key="sync"
-            app:title="@string/sync_title"
-            android:defaultValue="false"/>
+            app:title="@string/sync_title" />
 
         <SwitchPreferenceCompat
+            android:defaultValue="false"
             app:dependency="sync"
             app:key="savingAutomatically"
             app:summaryOff="@string/saving_automatically_off"
             app:summaryOn="@string/saving_automatically_on"
-            app:title="@string/saving_automatically_title"
-            android:defaultValue="false"/>
+            app:title="@string/saving_automatically_title" />
 
     </PreferenceCategory>
 

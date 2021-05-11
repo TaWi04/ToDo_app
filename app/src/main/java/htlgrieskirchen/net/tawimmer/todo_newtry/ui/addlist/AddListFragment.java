@@ -25,6 +25,7 @@ import htlgrieskirchen.net.tawimmer.todo_newtry.R;
 import htlgrieskirchen.net.tawimmer.todo_newtry.TodoList;
 
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.allTodoLists;
+import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.cloud;
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.drawerMenuActivity;
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.hideKeyboard;
 
@@ -58,13 +59,16 @@ public class AddListFragment extends Fragment {
     }
 
     public void addList() {
-
         txtTitle = (EditText) root.findViewById(R.id.editTextTitle);
         if (txtTitle.length() <= 0) {
             txtTitle.setError("Must at least have 1 characters!");
             return;
         }
         todoList = new TodoList(txtTitle.getText().toString(), new ArrayList<>(), spinnerForLabels.getSelectedItems());
+        if(DrawerMenuActivity.getCloudSaving() && DrawerMenuActivity.internetConnectionHandler.isNetworkAvailable(getActivity())){
+            cloud.addList(todoList);
+            todoList.setId(cloud.getLastChangeOnList().getId());
+        }
         allTodoLists.add(todoList);
         progressBar.setVisibility(View.VISIBLE);
 

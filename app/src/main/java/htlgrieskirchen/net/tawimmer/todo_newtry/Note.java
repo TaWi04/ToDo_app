@@ -6,7 +6,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public class Note implements Serializable{
+public class Note implements Serializable {
 
     private String title;
     private String noteString;
@@ -16,6 +16,7 @@ public class Note implements Serializable{
     //private List<Note> subTasks;
     private List<Label> labels;
     private boolean checked;
+    private int id;
 
 
 
@@ -42,35 +43,35 @@ public class Note implements Serializable{
         //this.subTasks = subTasks;
     }
 
-    public boolean isOver(){
+    public boolean isOver() {
         LocalDate localDateNow = LocalDate.now();
-        if(date!=null){
-            if(localDateNow.isAfter(date)){
+        if (date != null) {
+            if (localDateNow.isAfter(date)) {
                 return true;
-            }else if(localDateNow.isEqual(date)){
-             LocalTime localTimeNow = LocalTime.now();
-             if(time != null){
-                 if(localTimeNow.getHour() > time.getHour()){
-                     return true;
-                 }else if(localTimeNow.getHour() == time.getHour()){
-                     if(localTimeNow.getMinute() > time.getMinute()){
-                         return true;
-                     }
-                 }
-             }
+            } else if (localDateNow.isEqual(date)) {
+                LocalTime localTimeNow = LocalTime.now();
+                if (time != null) {
+                    if (localTimeNow.getHour() > time.getHour()) {
+                        return true;
+                    } else if (localTimeNow.getHour() == time.getHour()) {
+                        if (localTimeNow.getMinute() > time.getMinute()) {
+                            return true;
+                        }
+                    }
+                }
             }
         }
         return false;
     }
 
-    public String getFormatedDateString(String patternDate, String patternTime){
-        if(date!=null){
-            if(time!=null){
-                return date.atTime(time).format(DateTimeFormatter.ofPattern(patternDate+" "+patternTime));
-            }else{
+    public String getFormatedDateString(String patternDate, String patternTime) {
+        if (date != null) {
+            if (time != null) {
+                return date.atTime(time).format(DateTimeFormatter.ofPattern(patternDate + " " + patternTime));
+            } else {
                 return date.format(DateTimeFormatter.ofPattern(patternDate));
             }
-        }else{
+        } else {
             return null;
         }
     }
@@ -138,4 +139,13 @@ public class Note implements Serializable{
     public boolean isChecked() {
         return checked;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
 }

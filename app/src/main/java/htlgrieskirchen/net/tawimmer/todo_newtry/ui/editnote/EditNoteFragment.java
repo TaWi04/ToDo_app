@@ -32,6 +32,7 @@ import htlgrieskirchen.net.tawimmer.todo_newtry.TodoList;
 import htlgrieskirchen.net.tawimmer.todo_newtry.ui.addnote.AddNoteViewModel;
 
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.allTodoLists;
+import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.cloud;
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.currentListIndex;
 
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.drawerMenuActivity;
@@ -110,6 +111,9 @@ public class EditNoteFragment extends Fragment {
     public void deleteNote() {
         todoList.removeNoteFromList(currentNote);
         todoList.addToList(currentNote); //on last index
+        if(DrawerMenuActivity.getCloudSaving() && DrawerMenuActivity.internetConnectionHandler.isNetworkAvailable(getActivity())){
+            cloud.deleteNote(currentNote);
+        }
         new YourAsyncTask().execute();
         hideKeyboard(getActivity(), txtDetails);
         hideKeyboard(getActivity(), txtTitle);
@@ -133,8 +137,12 @@ public class EditNoteFragment extends Fragment {
         txtDetails = (EditText) root.findViewById(R.id.editTextToDo);
         ToggleButton toggleButton = (ToggleButton) root.findViewById(R.id.toggleButton_important);
 
+
         updateNote(txtTime, txtDate, txtTitle, txtDetails, toggleButton);
         currentNote.isChecked();
+        if(DrawerMenuActivity.getCloudSaving() && DrawerMenuActivity.internetConnectionHandler.isNetworkAvailable(getActivity())){
+            cloud.editNote(todoList,currentNote);
+        }
 
         progressBar.setVisibility(View.VISIBLE);
         new YourAsyncTask().execute();

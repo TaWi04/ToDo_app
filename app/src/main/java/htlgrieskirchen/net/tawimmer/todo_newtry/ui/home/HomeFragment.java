@@ -28,6 +28,8 @@ import htlgrieskirchen.net.tawimmer.todo_newtry.RecyclerViewListAdapter;
 import htlgrieskirchen.net.tawimmer.todo_newtry.TodoList;
 
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.allTodoLists;
+import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.cloud;
+import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.drawerMenuActivity;
 
 public class HomeFragment extends Fragment {
 
@@ -47,6 +49,7 @@ public class HomeFragment extends Fragment {
                 new ViewModelProvider(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 
+        drawerMenuActivity.getSupportActionBar().setTitle("Home");
         Bundle bundle = getArguments();
         if (bundle != null) {
             if ((todoList = (TodoList) bundle.getSerializable("home")) != null) {
@@ -92,6 +95,7 @@ public class HomeFragment extends Fragment {
     public void updateUI() {
         if ((((DrawerMenuActivity) this.getActivity()).allTodoLists) != null) {
 
+            drawerMenuActivity.getSupportActionBar().setTitle("Home");
             adapter = new RecyclerViewListAdapter(activity, ((ArrayList) (((DrawerMenuActivity) getActivity()).allTodoLists)));
             recyclerView.setAdapter(adapter);
         } else {
@@ -109,6 +113,9 @@ public class HomeFragment extends Fragment {
                 Snackbar snackbar1 = Snackbar.make(getActivity().findViewById(android.R.id.content), "Message is restored!", Snackbar.LENGTH_SHORT);
                 snackbar1.show();
                 snackbar.show();
+                if(DrawerMenuActivity.getCloudSaving() && DrawerMenuActivity.internetConnectionHandler.isNetworkAvailable(getActivity())){
+                    cloud.addList(todoList);
+                }
                 allTodoLists.add(todoList);
                 updateUI();
             }

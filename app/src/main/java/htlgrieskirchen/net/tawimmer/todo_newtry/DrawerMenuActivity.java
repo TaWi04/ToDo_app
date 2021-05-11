@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -18,10 +19,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -47,7 +48,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class DrawerMenuActivity extends AppCompatActivity {
+import htlgrieskirchen.net.tawimmer.todo_newtry.Cloud.Cloud;
+import htlgrieskirchen.net.tawimmer.todo_newtry.Cloud.InternetConnectionHandler;
+import htlgrieskirchen.net.tawimmer.todo_newtry.Cloud.User;
+
+public class DrawerMenuActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     public static DrawerLayout root;
     //prefs
@@ -56,8 +61,8 @@ public class DrawerMenuActivity extends AppCompatActivity {
     private static boolean hideDone;
     private static boolean cloudSaving;
     private static boolean saveAutomatically;
-
     //TODO for prefs
+    AccountFragment accountFragment;
     public int colorForDatesOverDueDate;
     public int colorForDates;
 
@@ -66,18 +71,23 @@ public class DrawerMenuActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
     public static NavController navController;
     public static int currentListIndex;
+    public static User currentUser;
+
+
     public static ArrayList<TodoList> allTodoLists;
     public static SharedPreferences prefs;
     private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
     public static DrawerMenuActivity drawerMenuActivity;
     private boolean permissionWriting;
     private boolean permissionReading;
+    public static Cloud cloud;
+    public static InternetConnectionHandler internetConnectionHandler = new InternetConnectionHandler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drawer_menu);
-        if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             checkPermissions();
         }
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -92,13 +102,16 @@ public class DrawerMenuActivity extends AppCompatActivity {
         //toolbar.setTitle("");
         currentListIndex = -1;
         setHideDone(getHideDone());
-
         allTodoLists = new ArrayList<>();
         listOfLabels = new ArrayList<>();
         listOfLabels.add(new Label("Tamara<3"));
         listOfLabels.add(new Label("Tamara"));
         listOfLabels.add(new Label("Testt"));
+        setNavigationViewListener();
+        accountFragment = new AccountFragment();
+        currentUser = new User(prefs.getString("username", ""), prefs.getString("password", ""));
 
+        cloud = new Cloud(currentUser);
         loadLists();
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -108,12 +121,11 @@ public class DrawerMenuActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_showTodoList, R.id.nav_settings)
+                R.id.nav_home, R.id.nav_settings, R.id.nav_account)
                 .setDrawerLayout(drawer)
                 .build();
         //getActionBar().setTitle("Hello world App");
         //getSupportActionBar().setTitle("Hello world App");
-
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
@@ -139,7 +151,7 @@ public class DrawerMenuActivity extends AppCompatActivity {
                     SettingActivity.class);
             startActivityForResult(intent, RQ_PREFERENCES);
 
-        } else if(item.getItemId() == R.id.action_save){
+        } else if (item.getItemId() == R.id.action_save) {
             saveLists();
             Toast.makeText(this, "Your Lists have been saved", Toast.LENGTH_LONG).show();
         }
@@ -156,32 +168,42 @@ public class DrawerMenuActivity extends AppCompatActivity {
     private static final int RQ_WRITE_STORAGE = 2;
     private static final int RQ_READ_STORAGE = 3;
 
-    private void checkPermissions(){
+    private void checkPermissions() {
         if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, RQ_WRITE_STORAGE);
         } else {
             permissionWriting = true;
         }
-        if (checkSelfPermission (Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, RQ_READ_STORAGE);
+        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, RQ_READ_STORAGE);
         } else {
             permissionReading = true;
         }
+
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode==RQ_WRITE_STORAGE) {
+        if (requestCode == RQ_WRITE_STORAGE) {
             permissionWriting = grantResults.length <= 0 || grantResults[0] == PackageManager.PERMISSION_GRANTED;
         }
-        if (requestCode==RQ_READ_STORAGE) {
+        if (requestCode == RQ_READ_STORAGE) {
             permissionReading = grantResults.length <= 0 || grantResults[0] == PackageManager.PERMISSION_GRANTED;
         }
+
     }
 
+    private void logIn() { //TODO
+        if (new InternetConnectionHandler().isNetworkAvailable(this)) {
 
-   // @RequiresApi(Build.VERSION_CODES.Q)
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("currentUser", currentUser);
+            Navigation.findNavController(this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_accountFragment, bundle);
+        }
+    }//TODO
+
+    // @RequiresApi(Build.VERSION_CODES.Q)
     @TargetApi(Build.VERSION_CODES.Q)
     private String getPath() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
@@ -191,18 +213,18 @@ public class DrawerMenuActivity extends AppCompatActivity {
         }
     }
 
-    public void saveLists(){
+    public void saveLists() {
         File file;
         try {
 
             PrintWriter outPrintWriter;
             String state = Environment.getExternalStorageState();
-            if (! state . equals(Environment.MEDIA_MOUNTED)) return;
-            if(permissionReading && permissionWriting){
+            if (!state.equals(Environment.MEDIA_MOUNTED)) return;
+            if (permissionReading && permissionWriting) {
                 String folder = getPath();
-                        file = new File(folder + File.separator + "lists.json");
-                outPrintWriter= new PrintWriter(new OutputStreamWriter(new FileOutputStream(file)));
-            }else{
+                file = new File(folder + File.separator + "lists.json");
+                outPrintWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file)));
+            } else {
                 file = new File("lists.json");
                 OutputStream outputStream = null;
                 try {
@@ -215,7 +237,7 @@ public class DrawerMenuActivity extends AppCompatActivity {
 
             Gson gson = new Gson();
 
-            String json =  gson.toJson(allTodoLists);
+            String json = gson.toJson(allTodoLists);
             System.out.println(allTodoLists);
             outPrintWriter.println(json);
             outPrintWriter.flush();
@@ -244,30 +266,45 @@ public class DrawerMenuActivity extends AppCompatActivity {
     }
 
 
-    private void loadLists(){
+    private void loadLists() {
         File file;
-        try {
-            String state = Environment.getExternalStorageState();
-            if (! state . equals(Environment.MEDIA_MOUNTED)) return;
-            FileInputStream fileInputStream;
-            if(permissionReading && permissionWriting){
-                String folder =  getPath();
-                file = new File(folder + File.separator + "lists.json");
-                fileInputStream = new FileInputStream(file);
-            }else{
-                file = new File("lists.json");
-                fileInputStream = openFileInput(file.getName());
-            }
-            allTodoLists.clear();
-            try(BufferedReader bufferedInputStream = new BufferedReader(new InputStreamReader(fileInputStream))){
-                String s = bufferedInputStream.readLine();
-                Gson gson = new Gson();
-                allTodoLists.addAll(gson.fromJson(s,new TypeToken<List<TodoList>>(){}.getType()));
 
-            } catch (IOException e) {
-                e.printStackTrace();
+        try {
+            if (cloudSaving && internetConnectionHandler.isNetworkAvailable(this)) {
+                allTodoLists.clear();
+                Thread thread = new Thread(() -> allTodoLists.addAll(cloud.loadListsFromCloud()));
+                thread.start();
+                thread.join();
+            } else {
+                String state = Environment.getExternalStorageState();
+                if (!state.equals(Environment.MEDIA_MOUNTED)) return;
+                FileInputStream fileInputStream;
+                if (permissionReading && permissionWriting) {
+                    String folder = getPath();
+                    file = new File(folder + File.separator + "lists.json");
+                    fileInputStream = new FileInputStream(file);
+                } else {
+                    file = new File("lists.json");
+                    fileInputStream = openFileInput(file.getName());
+                }
+                allTodoLists.clear();
+                try (BufferedReader bufferedInputStream = new BufferedReader(new InputStreamReader(fileInputStream))) {
+                    String s = bufferedInputStream.readLine();
+                    if (s == null || s.equals("")) {
+
+                    } else {
+
+                        Gson gson = new Gson();
+                        allTodoLists.addAll(gson.fromJson(s, new TypeToken<List<TodoList>>() {
+                        }.getType()));
+
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | InterruptedException e) {
             e.printStackTrace();
         }
         if (allTodoLists.size() != 0) {
@@ -312,20 +349,27 @@ public class DrawerMenuActivity extends AppCompatActivity {
     }
 
     public void setPrefs() {
-        //TODO USERNAME + PASSWORD
+        String username = prefs.getString("username", "");
+        if (username.length() < 1) {
+            Toast.makeText(this, " The username has to contain at least 1 character", Toast.LENGTH_LONG).show();
+        }
 
-            /*case "username":
-                String newUsername = newValue.toString();
-                boolean isValid = newUsername.length() > 2;
-                Toast.makeText(getActivity(), "The username has to contain at least 2 characters", Toast.LENGTH_LONG).show();
-                return isValid ;
-            case "password":
-                String newPassword = newValue.toString();
-                boolean isValidPw = newPassword.length() > 3;
-                Toast.makeText(getActivity(), "The password has to contain at least 3 characters", Toast.LENGTH_LONG).show();
-                return isValidPw ;*/
+        String password = prefs.getString("password", "");
+        if (password.length() < 1) {
+            Toast.makeText(this, " The password has to contain at least 1 character", Toast.LENGTH_LONG).show();
+        }
 
-
+        String name = prefs.getString("name", "");
+        if (name.length() < 1) {
+            Toast.makeText(this, " The name has to contain at least 1 character", Toast.LENGTH_LONG).show();
+        }
+        if (!password.equals("") && !username.equals("") && !name.equals("")) {
+            currentUser = new User(username, password);
+            currentUser.setName(name);
+        }
+        if(currentUser!= null){
+            currentUser.userLogin();
+        }
         String signatur = prefs.getString("signature", "");
         if (signatur.length() < 1) {
             Toast.makeText(this, " The signature has to contain at least 1 character", Toast.LENGTH_LONG).show();
@@ -336,7 +380,7 @@ public class DrawerMenuActivity extends AppCompatActivity {
         DrawerMenuActivity.setHideDone(hideDone);
         boolean darkMode = prefs.getBoolean("darkActivate", false);
         DrawerMenuActivity.setNightMode(darkMode);
-          boolean sync = prefs.getBoolean("sync", false);
+        boolean sync = prefs.getBoolean("sync", false);
         DrawerMenuActivity.setCloudSaving(sync);
         boolean savingAutomatically = prefs.getBoolean("savingAutomatically", false);
         DrawerMenuActivity.setSaveAutomatically(savingAutomatically);
@@ -344,20 +388,19 @@ public class DrawerMenuActivity extends AppCompatActivity {
     }
 
 
-
-    private void preferenceChanged(SharedPreferences sharedPrefs , String key) {//NOT NEEDED
-        Map<String, ?> allEntries = sharedPrefs. getAll () ;
+    private void preferenceChanged(SharedPreferences sharedPrefs, String key) {//NOT NEEDED
+        Map<String, ?> allEntries = sharedPrefs.getAll();
         String sValue = "";
-        if ( allEntries . get(key) instanceof String )
-            sValue = sharedPrefs. getString (key, "");
-        else if ( allEntries . get(key) instanceof Boolean)
-            sValue = String.valueOf( sharedPrefs .getBoolean(key, false ));
+        if (allEntries.get(key) instanceof String)
+            sValue = sharedPrefs.getString(key, "");
+        else if (allEntries.get(key) instanceof Boolean)
+            sValue = String.valueOf(sharedPrefs.getBoolean(key, false));
     }
 
-    private static void changeTheme(boolean night){
-        if(night) {
+    private static void changeTheme(boolean night) {
+        if (night) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        }else{
+        } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         }
     }
@@ -373,21 +416,65 @@ public class DrawerMenuActivity extends AppCompatActivity {
 
     public static void setHideDone(boolean hideDone) {
         DrawerMenuActivity.hideDone = hideDone;
-        if(hideDone && RecyclerViewAdapter.dropdownLayout != null){
+        if (hideDone && RecyclerViewAdapter.dropdownLayout != null) {
             RecyclerViewAdapter.dropdownLayout.setVisibility(View.GONE);
-        }else if(!hideDone && RecyclerViewAdapter.dropdownLayout != null){
+        } else if (!hideDone && RecyclerViewAdapter.dropdownLayout != null) {
             RecyclerViewAdapter.dropdownLayout.setVisibility(View.VISIBLE);
         }
     }
-    public static boolean getHideDone(){
+
+    public static boolean getHideDone() {
         return hideDone;
     }
+
     public static void setCloudSaving(boolean cloudSaving) {
         DrawerMenuActivity.cloudSaving = cloudSaving;
     }
-
+    public static boolean getCloudSaving() {
+        return cloudSaving;
+    }
     public static void setSaveAutomatically(boolean saveAutomatically) {
         DrawerMenuActivity.saveAutomatically = saveAutomatically;
     }
 
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.nav_settings:
+                Intent intent = new Intent(this,
+                        SettingActivity.class);
+                startActivityForResult(intent, RQ_PREFERENCES);
+                break;
+
+            case R.id.nav_account:
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("currentUser", currentUser);
+                Navigation.findNavController(this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_accountFragment, bundle);
+                break;
+        }
+        root.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    private void setNavigationViewListener() {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    public static User getCurrentUser() {
+        return currentUser;
+
+    }
+
+    public static void setCurrentUser(User user) {
+        DrawerMenuActivity.currentUser = user;
+        prefs.edit().putString("username", user.getUsername()).apply();
+        prefs.edit().putString("password", user.getPassword()).apply();
+        if(user.getName()!= null) prefs.edit().putString("name",user.getName()).apply();
+        cloud = new Cloud(currentUser);
+    }
+
+    public static Cloud getCloud() {
+        return cloud;
+    }
 }

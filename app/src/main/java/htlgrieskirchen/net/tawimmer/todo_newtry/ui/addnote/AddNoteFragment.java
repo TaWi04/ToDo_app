@@ -21,11 +21,13 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import htlgrieskirchen.net.tawimmer.todo_newtry.CalendarForToDo;
+import htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity;
 import htlgrieskirchen.net.tawimmer.todo_newtry.Note;
 import htlgrieskirchen.net.tawimmer.todo_newtry.R;
 import htlgrieskirchen.net.tawimmer.todo_newtry.TodoList;
 
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.allTodoLists;
+import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.cloud;
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.currentListIndex;
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.drawerMenuActivity;
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.hideKeyboard;
@@ -86,7 +88,11 @@ public class AddNoteFragment extends Fragment {
         }
         txtDetails = (EditText) root.findViewById(R.id.editTextToDo);
         ToggleButton toggleButton = (ToggleButton) root.findViewById(R.id.toggleButton_important);
-        todoList.addToList(createNote(txtTime, txtDate, txtTitle, txtDetails, toggleButton));
+        Note note = createNote(txtTime, txtDate, txtTitle, txtDetails, toggleButton);
+        if(DrawerMenuActivity.getCloudSaving() && DrawerMenuActivity.internetConnectionHandler.isNetworkAvailable(getActivity())){
+            cloud.addNote(todoList,note);
+        }
+        todoList.addToList(note);
         progressBar.setVisibility(View.VISIBLE);
 
         new YourAsyncTask().execute();

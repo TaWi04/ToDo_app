@@ -26,6 +26,7 @@ import htlgrieskirchen.net.tawimmer.todo_newtry.TodoList;
 import htlgrieskirchen.net.tawimmer.todo_newtry.ui.addlist.AddListViewModel;
 
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.allTodoLists;
+import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.cloud;
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.drawerMenuActivity;
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.hideKeyboard;
 
@@ -99,6 +100,9 @@ public class EditListFragment extends Fragment {
         // spinnerForLabels.setSelection(todoList.getLabel());
 
         updateList(txtTitle, spinnerForLabels);
+        if(DrawerMenuActivity.getCloudSaving() && DrawerMenuActivity.internetConnectionHandler.isNetworkAvailable(getActivity())){
+            cloud.editList(todoList);
+        }
         progressBar.setVisibility(View.VISIBLE);
 
         new YourAsyncTask().execute();
@@ -111,6 +115,9 @@ public class EditListFragment extends Fragment {
     public void deleteList() {
 
         allTodoLists.remove(todoList);
+        if(DrawerMenuActivity.getCloudSaving() && DrawerMenuActivity.internetConnectionHandler.isNetworkAvailable(getActivity())){
+            cloud.deleteList(todoList);
+        }
         allTodoLists.add(todoList); //on last index
         new EditListFragment.YourAsyncTask().execute();
         hideKeyboard(getActivity(), txtTitle);

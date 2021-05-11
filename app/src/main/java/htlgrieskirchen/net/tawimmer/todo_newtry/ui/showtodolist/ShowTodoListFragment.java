@@ -30,6 +30,7 @@ import htlgrieskirchen.net.tawimmer.todo_newtry.RecyclerViewAdapter;
 import htlgrieskirchen.net.tawimmer.todo_newtry.TodoList;
 
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.allTodoLists;
+import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.cloud;
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.currentListIndex;
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.drawerMenuActivity;
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.getHideDone;
@@ -58,6 +59,7 @@ public class ShowTodoListFragment extends Fragment {
         }else{
             todoList = (TodoList) bundle.getSerializable("ShowToDoListAfterDeletion");
             Note note = todoList.removeNoteFromList(todoList.removeNoteFromList(todoList.getNotes().get(todoList.getNotes().size()-1)));
+
             showSnackbar(note);
             updateUI();
         }
@@ -118,9 +120,16 @@ public class ShowTodoListFragment extends Fragment {
                 snackbar1.show();
                 snackbar.show();
                 if(note.isChecked()){
+                    if(DrawerMenuActivity.getCloudSaving() && DrawerMenuActivity.internetConnectionHandler.isNetworkAvailable(getActivity())){
+                        note.setChecked(true);
+                        cloud.addNote(todoList,note);
+                    }
                     todoList.addToList(note);
                     todoList.checkNote(todoList.getNotes().indexOf(note));
                 }else{
+                    if(DrawerMenuActivity.getCloudSaving() && DrawerMenuActivity.internetConnectionHandler.isNetworkAvailable(getActivity())){
+                        cloud.addNote(todoList,note);
+                    }
                     todoList.addToList(note);
                 }
                 updateUI();

@@ -27,9 +27,9 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:paddingTop="8dp"
-        android:text="Here are your lists with notes"
+        android:text="Hello dear!"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
-
+<!-- android:text="Here are your lists with notes"-->
     <TextView
         android:id="@+id/textView5"
         android:layout_width="match_parent"

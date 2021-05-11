@@ -19,6 +19,12 @@
         <action
             android:id="@+id/action_nav_home_to_editListFragment"
             app:destination="@id/editListFragment" />
+        <action
+            android:id="@+id/action_nav_home_to_settingActivity"
+            app:destination="@id/nav_settings" />
+        <action
+            android:id="@+id/action_nav_home_to_accountFragment"
+            app:destination="@id/nav_account" />
     </fragment>
 
     <fragment
@@ -56,6 +62,12 @@
         <action
             android:id="@+id/action_nav_showTodoList_to_nav_addNote"
             app:destination="@id/nav_addNote" />
+        <action
+            android:id="@+id/action_nav_showTodoList_to_settingActivity"
+            app:destination="@id/nav_settings" />
+        <action
+            android:id="@+id/action_nav_showTodoList_to_accountFragment"
+            app:destination="@id/nav_account" />
     </fragment>
     <fragment
         android:id="@+id/editNoteFragment"
@@ -83,5 +95,21 @@
         <action
             android:id="@+id/action_editListFragment_to_nav_home"
             app:destination="@id/nav_home" />
+    </fragment>
+    <activity
+        android:id="@+id/nav_settings"
+        android:name="htlgrieskirchen.net.tawimmer.todo_newtry.SettingActivity"
+        android:label="SettingActivity" />
+    <fragment
+        android:id="@+id/nav_account"
+        android:name="htlgrieskirchen.net.tawimmer.todo_newtry.AccountFragment"
+        android:label="fragment_account"
+        tools:layout="@layout/fragment_account" >
+        <action
+            android:id="@+id/action_accountFragment_to_nav_home"
+            app:destination="@id/nav_home" />
+        <action
+            android:id="@+id/action_accountFragment_to_nav_showTodoList"
+            app:destination="@id/nav_showTodoList" />
     </fragment>
 </navigation>
