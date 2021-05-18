@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -14,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
+import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.cloud;
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.getHideDone;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter {
@@ -154,6 +156,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
                 check.setOnClickListener(null);
                 if (note.isChecked()) {
                     dataSet.uncheckNote(getAdapterPosition() - (dataSet.getNotes().size() + 1));
+                    cloud.editNote(dataSet,note);//TODO NEW
                     setImage(note);
 
 
@@ -178,6 +181,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
 
                 } else {
                     dataSet.checkNote(getAdapterPosition());
+                    cloud.editNote(dataSet,note);//TODO NEW
                     setImage(note);
 
                     if (checkedShown) {
@@ -213,12 +217,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
         private LinearLayout dropdown;
         private View view;
 
+        private ImageView expand;
+
         public ViewHolderDropdown(View view) {
             super(view);
             this.view = view;
             DrawerMenuActivity.setHideDone(getHideDone());
             dropdown = view.findViewById(R.id.dropdown);
             dropdownLayout = dropdown;
+
+            expand = view.findViewById(R.id.imageView);
         }
 
         public LinearLayout getDropdown(){
@@ -229,9 +237,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
             dropdownLayout.setOnClickListener(v -> {
                 DrawerMenuActivity.setHideDone(getHideDone());
                 if (checkedShown || DrawerMenuActivity.getHideDone()) {
+                    expand.animate().rotation(360f).start();
                     checkedShown = false;
                     notifyItemRangeRemoved(getAdapterPosition() + 1, dataSet.getCheckedNotes().size());
                 } else {
+                    expand.animate().rotation(180f).start();
                     checkedShown = true;
                     notifyItemRangeInserted(getAdapterPosition() + 1, dataSet.getCheckedNotes().size());
                 }

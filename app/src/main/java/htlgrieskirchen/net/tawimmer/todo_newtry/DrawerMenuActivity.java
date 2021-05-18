@@ -110,8 +110,10 @@ public class DrawerMenuActivity extends AppCompatActivity implements NavigationV
         setNavigationViewListener();
         accountFragment = new AccountFragment();
         currentUser = new User(prefs.getString("username", ""), prefs.getString("password", ""));
-
         cloud = new Cloud(currentUser);
+        if(!currentUser.getUsername().equals("") && !currentUser.getPassword().equals("")){
+            currentUser.userLogin(internetConnectionHandler);
+        }
         loadLists();
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -201,7 +203,7 @@ public class DrawerMenuActivity extends AppCompatActivity implements NavigationV
             bundle.putSerializable("currentUser", currentUser);
             Navigation.findNavController(this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_accountFragment, bundle);
         }
-    }//TODO
+    }//TODO NOT NEEDED
 
     // @RequiresApi(Build.VERSION_CODES.Q)
     @TargetApi(Build.VERSION_CODES.Q)
@@ -366,9 +368,7 @@ public class DrawerMenuActivity extends AppCompatActivity implements NavigationV
         if (!password.equals("") && !username.equals("") && !name.equals("")) {
             currentUser = new User(username, password);
             currentUser.setName(name);
-        }
-        if(currentUser!= null){
-            currentUser.userLogin();
+            //currentUser.userLogin(internetConnectionHandler);
         }
         String signatur = prefs.getString("signature", "");
         if (signatur.length() < 1) {
@@ -463,7 +463,6 @@ public class DrawerMenuActivity extends AppCompatActivity implements NavigationV
 
     public static User getCurrentUser() {
         return currentUser;
-
     }
 
     public static void setCurrentUser(User user) {

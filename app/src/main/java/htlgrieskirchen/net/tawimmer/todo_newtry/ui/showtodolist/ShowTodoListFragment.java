@@ -63,6 +63,7 @@ public class ShowTodoListFragment extends Fragment {
             showSnackbar(note);
             updateUI();
         }
+
         root = inflater.inflate(R.layout.fragment_showtodolist, container, false);
 
         drawerMenuActivity.getSupportActionBar().setTitle(todoList.getTitle());

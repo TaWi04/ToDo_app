@@ -34,9 +34,11 @@ public class User implements Serializable {
         password = in.readString();
     }
 
-    public boolean userLogin() {
-        InternetConnectionHandler.Response response = internetConnectionHandler.post("http://sickinger-solutions.at/notesserver/todolists.php?username=" + username + "&password=" + password, "");
+    public boolean userLogin(InternetConnectionHandler connectionHandler) {
+        InternetConnectionHandler.Response response = connectionHandler.post("http://sickinger-solutions.at/notesserver/"+"todolists.php?username="+ username + "&password="+ password,"");
 
+        boolean result = response.startWith(2);
+        System.out.println("result:" + result);
         try {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.inputStream));
 

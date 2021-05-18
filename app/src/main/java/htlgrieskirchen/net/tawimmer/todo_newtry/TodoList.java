@@ -4,6 +4,8 @@ package htlgrieskirchen.net.tawimmer.todo_newtry;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.cloud;
+
 public class TodoList implements Serializable {
 
     private String title;

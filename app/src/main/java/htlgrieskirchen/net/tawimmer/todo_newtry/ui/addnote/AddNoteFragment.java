@@ -52,6 +52,8 @@ public class AddNoteFragment extends Fragment {
                 createDatePicker();
             }
         });
+        txtDetails = (EditText) root.findViewById(R.id.editTextToDo);
+        txtDetails.setCursorVisible(true);
         drawerMenuActivity.getSupportActionBar().setTitle("New Note");
 
         FloatingActionButton floatingActionButton = (FloatingActionButton) root.findViewById(R.id.fab_check);

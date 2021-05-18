@@ -2,6 +2,8 @@ package htlgrieskirchen.net.tawimmer.todo_newtry.Cloud;
 
 import android.util.Log;
 
+import androidx.core.util.Pools;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -51,7 +53,7 @@ public class Cloud {
 
     public List<TodoList> loadListsFromCloud() {
         ArrayList<TodoList> todoLists = new ArrayList<>();
-        InternetConnectionHandler.Response response = connection.get(url+"todolists.php?" +"&username="+ user.getUsername() + "&password="+ user.getPassword());
+        InternetConnectionHandler.Response response = connection.get(url+"todolists.php?username="+ user.getUsername() + "&password="+ user.getPassword());
         boolean result = response.startWith(2);
         if (result) {
             try {
@@ -86,29 +88,60 @@ public class Cloud {
                 JsonArray json = new JsonParser().parse(br.readLine()).getAsJsonArray();
                 response.close();
                 for (int i = 0; i < json.size(); i++) {
+                    Note note;
                     JsonObject jsonObject = json.get(i).getAsJsonObject();
                     int id = jsonObject.get("id").getAsInt();
                     String title = jsonObject.get("title").getAsString();
                     String details = jsonObject.get("description").getAsString();
+                    if(details.equals("_")){
+                        details = "";
+                    }
                     String dateTime = jsonObject.get("dueDate").getAsString();
                     DateTimeFormatter cloudFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                    System.out.println(dateTime);
                     LocalDateTime localDateTime = LocalDateTime.parse(dateTime, cloudFormat);
                     DateTimeFormatter appFormatDate = DateTimeFormatter.ofPattern("dd.MM.yyyy");
                     DateTimeFormatter appFormatTime = DateTimeFormatter.ofPattern("HH:mm");
+                    System.out.println(localDateTime.toString());
                     String dateString = localDateTime.format(appFormatDate);
+                    System.out.println(dateString);
                     LocalDate date = LocalDate.parse(dateString, appFormatDate);
+                    boolean dateIsValid = true;
+                    if(date.isEqual(LocalDate.parse("01.01.1911", appFormatDate))){//1901-01-01 01:01:01
+                       note = new Note(title,details, true);//TODO important
+                        dateIsValid = false;
+                    }
+                    boolean timeIsValid = true;
                     String timeString = localDateTime.format(appFormatTime);
                     LocalTime time = LocalTime.parse(timeString, appFormatTime);
+
+                    if(time.equals(LocalTime.parse("01:01", appFormatTime))){
+                        if(dateIsValid){
+                            note = new Note(title,details,date,true);//TODO important
+                        }else{
+                            note = new Note(title,details, true);//TODO important
+                        }
+                        timeIsValid = false;
+                    }else{
+                       }
                     boolean done;
                     done = !jsonObject.get("state").getAsString().equals("OPEN");
-                    Note note = new Note(title, details, date, time, false);
+                    if(dateIsValid && timeIsValid){
+                        note = new Note(title, details, date, time, true);
+                    }else{
+                        note = new Note(title,details,true);
+                    }
                     note.setChecked(done);
                     note.setId(id);
                     int idList = jsonObject.get("todoListId").getAsInt();
                     //note.setLocation(jsonObject.get("additionalData").getAsString()); //TODO
                     for (TodoList todolist : todoLists) {
                         if (todolist.getId() == idList) {
-                            todolist.getNotes().add(note);
+                            if(note.isChecked()){
+                                todolist.getCheckedNotes().add(note);
+                            }else{
+                                todolist.getNotes().add(note);
+                            }
                         }
                     }
                 }
@@ -172,10 +205,10 @@ public class Cloud {
             }else{
                 jsonObject.put("description", note.getNoteString());
             }
-            if(note.getFormatedDateString("yyyy-mm-dd","HH:mm:ss") == null){
-                jsonObject.put("dueDate", "1999-01-12 00:01:11");
+            if(note.getFormatedDateString("yyyy-MM-dd","HH:mm:ss") == null){
+                jsonObject.put("dueDate", "1911-01-01 01:01:01");
             }else{
-                jsonObject.put("dueDate", note.getFormatedDateString("yyyy-mm-dd","HH:mm:ss"));
+                jsonObject.put("dueDate", note.getFormatedDateString("yyyy-MM-dd","HH:mm:ss"));
             }
            if(note.isChecked()){
                 jsonObject.put("state","CLOSED");
@@ -213,7 +246,7 @@ public class Cloud {
             }else{
                 jsonObject.put("state","OPEN");
             }
-            jsonObject.put("additionalData", "");//note.isImportant() + ";"+ note.getLocation());
+            jsonObject.put("additionalData", "_");//note.isImportant() + ";"+ note.getLocation());
 
             InternetConnectionHandler.Response response = connection.put(url+"todo.php?" +"id="+note.getId()+"&username="+ user.getUsername() + "&password=" + user.getPassword(),jsonObject.toString());
 

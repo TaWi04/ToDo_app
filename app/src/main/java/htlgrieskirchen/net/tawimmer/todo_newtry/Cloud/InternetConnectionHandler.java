@@ -47,7 +47,7 @@ public class InternetConnectionHandler {
 
                         } else {
                             responses[0] = new Response(httpURLConnection.getErrorStream(), responseCode);
-                            Log.println(Log.DEBUG, "InternetConnectionHandler.java,LogIn", httpURLConnection.getResponseMessage());
+                            Log.println(Log.DEBUG, "InternetConnectionHandler.java,LogIn", httpURLConnection.getResponseMessage()+httpURLConnection.getRequestMethod() + httpURLConnection.getResponseCode());
                         }
                     } else {
                         responses[0] = new Response(httpURLConnection.getInputStream(), responseCode);

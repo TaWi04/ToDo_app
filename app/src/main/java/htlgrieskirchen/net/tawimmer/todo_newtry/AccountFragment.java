@@ -30,6 +30,7 @@ import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.allTod
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.currentUser;
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.drawerMenuActivity;
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.hideKeyboard;
+import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.internetConnectionHandler;
 import static htlgrieskirchen.net.tawimmer.todo_newtry.DrawerMenuActivity.setCurrentUser;
 
 public class AccountFragment extends Fragment {
@@ -112,7 +113,7 @@ public class AccountFragment extends Fragment {
         User user = new User(txtUsername.getText().toString(), txtPassword.getText().toString());
         user.setName(txtName.getText().toString());
         if (user.getUsername().length() > 0 && user.getPassword().length() > 0) {
-            if (user.userLogin()) {
+            if (user.userLogin(internetConnectionHandler)) {
                 Toast.makeText(drawerMenuActivity, "Please log in or create another User!", Toast.LENGTH_LONG).show();
             } else {
                 user.userSignIn();
@@ -136,7 +137,7 @@ public class AccountFragment extends Fragment {
 
     public void login() {
         User user = new User(txtUsername.getText().toString(), txtPassword.getText().toString());
-        if (user.userLogin()) {
+        if (user.userLogin(internetConnectionHandler)) {
             setCurrentUser(user);
             Toast.makeText(drawerMenuActivity, "User logged in!", Toast.LENGTH_LONG).show();
             Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_accountFragment_to_nav_home);
